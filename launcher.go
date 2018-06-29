@@ -38,11 +38,11 @@ func (ls Launchers) Up(filename string) error {
 }
 
 // Down all launchers in slice order.
-func (ls Launchers) Down() error {
+func (ls Launchers) Down(configs Configs) error {
 	var e error
 	for _, l := range ls {
 		// return last error only
-		if err := l.Down(); err != nil {
+		if err := l.Down(configs); err != nil {
 			e = err
 		}
 	}
