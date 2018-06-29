@@ -8,7 +8,7 @@ import (
 // Launcher represents a service launcher.
 type Launcher interface {
 	Up(Configs) error
-	Down(Configs) error
+	Down() error
 
 	read(Configs) error
 }
@@ -35,4 +35,16 @@ func (ls Launchers) Up(filename string) error {
 		}
 	}
 	return nil
+}
+
+// Down all launchers in slice order.
+func (ls Launchers) Down() error {
+	var e error
+	for _, l := range ls {
+		// return last error only
+		if err := l.Down(); err != nil {
+			e = err
+		}
+	}
+	return e
 }
