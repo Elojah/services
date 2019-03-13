@@ -31,7 +31,6 @@ all: check
 vendor:
 	$(info $(M) running go mod vendor…) @
 	$Q $(GO) mod vendor
-	# $Q modvendor -copy="**/*.c **/*.h" -v
 
 # Tidy
 .PHONY: tidy
