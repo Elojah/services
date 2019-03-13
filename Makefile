@@ -2,10 +2,22 @@ PACKAGE  = launcher
 DATE    ?= $(shell date +%FT%T%z)
 VERSION  ?= $(shell echo $(shell cat $(PWD)/.version)-$(shell git describe --tags --always))
 
-GO      = go1.11
 GODOC   = godoc
 GOFMT   = gofmt
-GOLINT  = gometalinter
+
+ifneq ($(wildcard /snap/go/current/bin/go),)
+	GO = /snap/go/current/bin/go
+else ifneq ($(shell which go1.11),)
+	GO = go1.11
+else
+	GO = go
+endif
+
+ifneq ($(wildcard ./bin/golangci-lint),)
+	GOLINT = ./bin/golangci-lint
+else
+	GOLINT = golangci-lint
+endif
 
 V = 0
 Q = $(if $(filter 1,$V),,@)
@@ -21,19 +33,21 @@ vendor:
 	$Q $(GO) mod vendor
 	# $Q modvendor -copy="**/*.c **/*.h" -v
 
+# Tidy
+.PHONY: tidy
+tidy:
+	$(info $(M) running go mod tidy…) @
+	$Q $(GO) mod tidy
+
 # Check
 .PHONY: check
-check: lint test
+check: vendor lint test
 
 # Lint
 .PHONY: lint
-lint: $(GOLINT) ; $(info $(M) running golint…) @ ## Run golint
-	$Q go get github.com/golang/lint/golint
-	$Q gometalinter "--vendor" \
-					"--disable=gotype" \
-					"--fast" \
-					"--json" \
-					"./..." \
+lint:
+	$(info $(M) running $(GOLINT)…)
+	$Q $(GOLINT) run
 
 # Test
 .PHONY: test
