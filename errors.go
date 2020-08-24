@@ -4,6 +4,16 @@ import (
 	"fmt"
 )
 
+// ErrMissingNamespace is raised when config namespace is missing.
+type ErrMissingNamespace struct {
+	Namespace string
+}
+
+// Error implementation for ErrMissingNamespace.
+func (e ErrMissingNamespace) Error() string {
+	return fmt.Sprintf("missing namespace %s", e.Namespace)
+}
+
 // ErrEmptyNamespace is raised when config namespace is empty.
 type ErrEmptyNamespace struct{}
 

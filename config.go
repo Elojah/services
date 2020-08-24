@@ -1,9 +1,5 @@
 package services
 
-import (
-	"fmt"
-)
-
 // Config represents structure configs used for each service.
 type Config interface{}
 
@@ -16,16 +12,20 @@ func NewConfigs(ns ...Namespace) *Configs {
 	for _, n := range ns {
 		cfgs[n] = nil
 	}
+
 	return &cfgs
 }
 
 func (c *Configs) read(fileconfigs Configs) error {
 	for ns := range *c {
 		fc, ok := fileconfigs[ns]
+
 		if !ok {
-			return fmt.Errorf("missing configuration namespace %s", ns)
+			return ErrMissingNamespace{Namespace: string(ns)}
 		}
+
 		(*c)[ns] = fc
 	}
+
 	return nil
 }

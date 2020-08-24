@@ -30,30 +30,36 @@ func (ls *Launchers) Up(filename string) error {
 	if err != nil {
 		return err
 	}
+
 	configs := make(Configs)
 	if err := json.Unmarshal(raw, &configs); err != nil {
 		return err
 	}
+
 	ls.configs = configs
 	for _, l := range ls.launchers {
 		if err := l.read(configs); err != nil {
 			return err
 		}
+
 		if err := l.Up(configs); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
 // Down all launchers in slice order.
 func (ls *Launchers) Down() error {
 	var e error
+
 	for _, l := range ls.launchers {
 		// return last error only
 		if err := l.Down(ls.configs); err != nil {
 			e = err
 		}
 	}
+
 	return e
 }
